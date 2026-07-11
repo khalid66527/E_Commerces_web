@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "development") {
   client = new MongoClient(uri);
 }
 
-const db = client.db(dbName);
+export const db = client.db(dbName);
 
 export const auth = betterAuth({
     database: mongodbAdapter(db, {
