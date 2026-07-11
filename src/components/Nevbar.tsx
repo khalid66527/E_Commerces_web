@@ -29,7 +29,8 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const desktopDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
   // Initialize theme
   useEffect(() => {
@@ -47,7 +48,10 @@ export default function Navbar() {
   // Handle click outside profile dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const clickedOutsideDesktop = !desktopDropdownRef.current || !desktopDropdownRef.current.contains(event.target as Node);
+      const clickedOutsideMobile = !mobileDropdownRef.current || !mobileDropdownRef.current.contains(event.target as Node);
+      
+      if (clickedOutsideDesktop && clickedOutsideMobile) {
         setDropdownOpen(false);
       }
     }
@@ -75,16 +79,11 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            setDropdownOpen(false);
-            setIsOpen(false);
-            router.push('/auth/signin');
-            router.refresh();
-          }
-        }
-      });
+      await signOut();
+      setDropdownOpen(false);
+      setIsOpen(false);
+      router.push('/auth/signin');
+      router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -199,7 +198,7 @@ export default function Navbar() {
               {isPending ? (
                 <div className="w-8 h-8 rounded-full border-2 border-t-transparent border-[#8B5CF6] animate-spin" />
               ) : user ? (
-                <div className="relative" ref={dropdownRef}>
+                <div className="relative" ref={desktopDropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center space-x-2 p-1.5 rounded-xl border border-gray-300 dark:border-[#8B5CF6]/30 hover:border-[#EC4899] dark:hover:border-[#EC4899] transition-all bg-gray-50 dark:bg-[#111122]/50 text-gray-700 dark:text-white"
@@ -285,7 +284,7 @@ export default function Navbar() {
 
             {/* User Dropdown or Login (Mobile Icon) */}
             {user ? (
-              <div className="relative" ref={dropdownRef}>
+              <div className="relative" ref={mobileDropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#8B5CF6] to-[#EC4899] flex items-center justify-center text-white font-bold text-xs uppercase shadow-md"
