@@ -10,6 +10,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen bg-[#06060C] text-gray-300 font-sans flex">
       
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+    
         <main className="">
           {children}
         </main>
