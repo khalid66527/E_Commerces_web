@@ -3,8 +3,11 @@
 import React, { useState } from 'react';
 import { FaFacebookSquare } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
+import { useRouter } from 'next/navigation';
+import { signUp } from '@/lib/auth-client';
 
 export default function SignUp() {
+  const router = useRouter();
   // ইনপুট ভ্যালু ট্র্যাক করার জন্য স্টেটসমূহ
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -14,33 +17,47 @@ export default function SignUp() {
   const [isVisible, setIsVisible] = useState(false);
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const toggleVisibility = () => setIsVisible(!isVisible);
   const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
 
     // পাসওয়ার্ড ভ্যালিডেশন চেক
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      setErrorMsg("Passwords do not match!");
       return;
     }
 
-    setIsSubmitting(true);
-  
-    // এখানে আপনার সাইনআপ ফর্মের সব ডেটা কন্সোল লগ করা হলো
-    console.log("Sign Up Data Submitted:", {
-      fullName: fullName,
-      email: email,
-      password: password,
-     
-    });
-
-    // লোডিং ইফেক্ট দেখার জন্য ২ সেকেন্ড পর সাবমিটিং স্টেট ফলস হবে
-    setTimeout(() => {
+    try {
+      await signUp.email({
+        email: email,
+        password: password,
+        name: fullName,
+        callbackURL: '/',
+        fetchOptions: {
+          onRequest: () => {
+            setIsSubmitting(true);
+          },
+          onResponse: () => {
+            setIsSubmitting(false);
+          },
+          onSuccess: () => {
+            router.push('/');
+            router.refresh();
+          },
+          onError: (ctx) => {
+            setErrorMsg(ctx.error.message || 'An error occurred during sign up.');
+          }
+        }
+      });
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Something went wrong.');
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -65,6 +82,12 @@ export default function SignUp() {
             </h2>
             <p className="text-gray-400 text-sm">Join the next generation electronics hub</p>
           </div>
+
+          {errorMsg && (
+            <div className="mb-5 p-3 rounded-xl bg-[#F43F5E]/10 border border-[#F43F5E]/20 text-[#F43F5E] text-xs text-center font-medium">
+              {errorMsg}
+            </div>
+          )}
 
           {/* Registration Form */}
           <form onSubmit={handleSignup} className="space-y-5">

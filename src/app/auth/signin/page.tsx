@@ -3,31 +3,50 @@
 import React, { useState } from 'react';
 import { FaFacebookSquare } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
+import { useRouter } from 'next/navigation';
+import { signIn } from '@/lib/auth-client';
 
 export default function SignIn() {
+  const router = useRouter();
   // ইনপুট ভ্যালু ট্র্যাক করার জন্য স্টেট
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const handleSignin = (e: React.FormEvent) => {
+  const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    // এখানে আপনার ইমেইল এবং পাসওয়ার্ড কন্সোল লগ করা হলো
-    console.log("Sign In Data Submitted:", {
-      email: email,
-      password: password
-    });
+    setErrorMsg('');
 
-    // টেস্ট করার জন্য সাবমিটিং অ্যানিমেশন ২ সেকেন্ড পর বন্ধ হবে
-    setTimeout(() => {
+    try {
+      await signIn.email({
+        email: email,
+        password: password,
+        callbackURL: '/',
+        fetchOptions: {
+          onRequest: () => {
+            setIsSubmitting(true);
+          },
+          onResponse: () => {
+            setIsSubmitting(false);
+          },
+          onSuccess: () => {
+            router.push('/');
+            router.refresh();
+          },
+          onError: (ctx) => {
+            setErrorMsg(ctx.error.message || 'Invalid email or password.');
+          }
+        }
+      });
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Something went wrong.');
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -52,6 +71,12 @@ export default function SignIn() {
             </h2>
             <p className="text-gray-400 text-sm">Log in to access your electronics hub</p>
           </div>
+
+          {errorMsg && (
+            <div className="mb-5 p-3 rounded-xl bg-[#F43F5E]/10 border border-[#F43F5E]/20 text-[#F43F5E] text-xs text-center font-medium">
+              {errorMsg}
+            </div>
+          )}
 
           {/* Login Form */}
           <form onSubmit={handleSignin} className="space-y-5">
