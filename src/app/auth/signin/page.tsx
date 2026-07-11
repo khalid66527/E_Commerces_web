@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { FaFacebookSquare } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { useRouter } from 'next/navigation';
-import { signIn } from '@/lib/auth-client';
+import { authClient, signIn } from '@/lib/auth-client';
 
 export default function SignIn() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function SignIn() {
     e.preventDefault();
     setErrorMsg('');
 
-    try {
+    
       await signIn.email({
         email: email,
         password: password,
@@ -43,11 +43,15 @@ export default function SignIn() {
           }
         }
       });
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Something went wrong.');
-      setIsSubmitting(false);
-    }
+  
   };
+
+
+  const handleGoogleSignin =async()=>{
+    await authClient.signIn.social({
+      provider:"google"
+    })
+  }
 
   return (
     <div className="relative min-h-screen bg-[#06060C] text-gray-300 font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -159,6 +163,7 @@ export default function SignIn() {
           <div className="space-y-3">
             {/* Google */}
             <button
+              onClick={handleGoogleSignin}
               type="button"
               className="w-full h-12 border border-gray-800 hover:border-[#EC4899]/50 bg-[#16162a]/40 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm text-white"
             >

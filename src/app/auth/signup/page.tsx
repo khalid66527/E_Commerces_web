@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { FaFacebookSquare } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { useRouter } from 'next/navigation';
-import { signUp } from '@/lib/auth-client';
+import { authClient, signUp } from '@/lib/auth-client';
 
 export default function SignUp() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function SignUp() {
       return;
     }
 
-    try {
+    
       await signUp.email({
         email: email,
         password: password,
@@ -54,15 +54,18 @@ export default function SignUp() {
           }
         }
       });
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Something went wrong.');
-      setIsSubmitting(false);
-    }
+  
   };
+
+  const handleGoogleSignin = async () => {
+    await authClient.signIn.social({
+      provider: "google"
+    })
+  }
 
   return (
     <div className="relative min-h-screen bg-[#06060C] text-gray-300 font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      
+
       {/* Ambient Vibrant Purple & Neon Glows */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#8B5CF6]/10 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#EC4899]/10 rounded-full blur-[150px] pointer-events-none"></div>
@@ -71,7 +74,7 @@ export default function SignUp() {
 
         {/* Main Card Container */}
         <div className="bg-gradient-to-b from-[#111122]/80 to-[#07070F]/90 backdrop-blur-xl border border-[#8B5CF6]/20 rounded-[2.5rem] p-8 md:p-10 shadow-[0_0_50px_rgba(139,92,246,0.05)] relative overflow-hidden">
-          
+
           {/* Top Border Gradient Glow */}
           <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#EC4899] to-transparent"></div>
 
@@ -189,6 +192,7 @@ export default function SignUp() {
           <div className="space-y-3">
             {/* Google Button */}
             <button
+              onClick={handleGoogleSignin}
               type="button"
               className="w-full h-12 border border-gray-800 hover:border-[#EC4899]/50 bg-[#16162a]/40 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm text-white"
             >
