@@ -7,6 +7,7 @@ import { Product } from '@/lib/api/products';
 import { FiSearch, FiHeart, FiShoppingCart, FiShoppingBag, FiEye, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { useSession } from '@/lib/auth-client';
 import { addToWishlist } from '@/lib/actions/wishlist';
+import { addToCartBackend } from '@/lib/actions/cart';
 
 interface ShopCartProps {
   products: Product[];
@@ -34,32 +35,28 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
     }, 3000);
   };
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = async (product: Product) => {
+    if (!session?.user) {
+      showToast('error', 'Please log in to add to cart!');
+      return;
+    }
+
     try {
-      const currentCartRaw = localStorage.getItem('cart');
-      const cart = currentCartRaw ? JSON.parse(currentCartRaw) : [];
-      
       const productId = product.id || product._id;
-      const existing = cart.find((item: any) => item.id === productId || item._id === productId);
-      
-      if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
+      const res = await addToCartBackend(
+        session.user.email || '',
+        session.user.name || '',
+        session.user.id || '',
+        productId,
+        product,
+        1
+      );
+      if (res.success) {
+        showToast('success', `${product.title} added to cart!`);
+        window.dispatchEvent(new Event('cart-updated'));
       } else {
-        cart.push({
-          id: productId,
-          _id: productId,
-          title: product.title,
-          brand: product.brand,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          category: product.category,
-          quantity: 1,
-        });
+        showToast('error', res.message);
       }
-      
-      localStorage.setItem('cart', JSON.stringify(cart));
-      window.dispatchEvent(new Event('cart-updated'));
-      showToast('success', `${product.title} added to cart!`);
     } catch (error) {
       console.error(error);
       showToast('error', 'Failed to add to cart.');

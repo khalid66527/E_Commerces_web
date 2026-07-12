@@ -15,9 +15,13 @@ import {
   FiLogOut,
   FiLayout,
   FiSettings,
-  FiGrid
+  FiGrid,
+  FiTrash2,
+  FiShoppingBag
 } from 'react-icons/fi';
 import { useSession, signOut } from '@/lib/auth-client';
+import { getCartBackend, removeFromCartBackend } from '@/lib/actions/cart';
+import AddToCard from '@/components/AddToCard';
 
 export default function Navbar() {
   const router = useRouter();
@@ -32,20 +36,51 @@ export default function Navbar() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mounted, setMounted] = useState(false); // Solves the load/hydration flash issue
   const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
-  const updateCartCount = () => {
+  const updateCartCount = async () => {
+    if (!user?.email) {
+      setCartCount(0);
+      setCartItems([]);
+      return;
+    }
     try {
-      const currentCartRaw = localStorage.getItem('cart');
-      const cart = currentCartRaw ? JSON.parse(currentCartRaw) : [];
-      const total = cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
-      setCartCount(total);
+      const res = await getCartBackend(user.email);
+      if (res.success && res.data) {
+        setCartItems(res.data);
+        const total = res.data.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+        setCartCount(total);
+      } else {
+        setCartCount(0);
+        setCartItems([]);
+      }
     } catch (e) {
       console.error(e);
       setCartCount(0);
+      setCartItems([]);
     }
   };
+
+  const handleDeleteCartItem = async (id: string) => {
+    try {
+      const res = await removeFromCartBackend(id);
+      if (res.success) {
+        window.dispatchEvent(new Event('cart-updated'));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Fetch cart count when user changes
+  useEffect(() => {
+    if (mounted) {
+      updateCartCount();
+    }
+  }, [user?.email, mounted]);
 
   // Initialize theme and cart count securely
   useEffect(() => {
@@ -59,13 +94,15 @@ export default function Navbar() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+  }, []);
 
-    updateCartCount();
+  // Listen to cart update events, re-subscribing when user changes to avoid stale closures
+  useEffect(() => {
     window.addEventListener('cart-updated', updateCartCount);
     return () => {
       window.removeEventListener('cart-updated', updateCartCount);
     };
-  }, []);
+  }, [user?.email]);
 
   // Handle click outside profile dropdown
   useEffect(() => {
@@ -138,7 +175,8 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 dark:bg-[#06060C]/70 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_10px_30px_rgba(139,92,246,0.03)]">
+    <>
+      <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 dark:bg-[#06060C]/70 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_10px_30px_rgba(139,92,246,0.03)]">
       {/* Top Border Animated Neon line */}
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#EC4899] to-transparent animate-pulse"></div>
 
@@ -217,14 +255,17 @@ export default function Navbar() {
               </button>
 
               {/* Cart Button */}
-              <Link href="/cart" className="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-gray-200/50 dark:hover:border-white/[0.05] rounded-xl active:scale-95 transition-all duration-200 group">
+              <button 
+                onClick={() => setCartDrawerOpen(true)}
+                className="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-gray-200/50 dark:hover:border-white/[0.05] rounded-xl active:scale-95 transition-all duration-200 group cursor-pointer"
+              >
                 <FiShoppingCart size={19} className="group-hover:translate-x-0.5 transition-transform" />
                 {mounted && cartCount > 0 && (
                   <span className="absolute top-1 right-1 h-4 w-4 bg-[#EC4899] text-white text-[9px] font-bold flex items-center justify-center rounded-full shadow-md shadow-[#EC4899]/40 animate-bounce">
                     {cartCount}
                   </span>
                 )}
-              </Link>
+              </button>
 
               {/* Profile Dropdown or Sign In */}
               {isPending ? (
@@ -263,6 +304,15 @@ export default function Navbar() {
                         >
                           <FiUser size={16} className="text-[#8B5CF6] group-hover:scale-110 transition-transform" />
                           <span>Profile</span>
+                        </Link>
+
+                        <Link
+                          href="/cart"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/[0.04] rounded-xl text-sm font-medium transition-colors group"
+                        >
+                          <FiShoppingCart size={16} className="text-[#EC4899] group-hover:scale-110 transition-transform" />
+                          <span>My Added</span>
                         </Link>
 
                         {/* Integrated Dashboard Links directly inside Profile */}
@@ -319,14 +369,17 @@ export default function Navbar() {
             </button>
 
             {/* Cart (Mobile) */}
-            <Link href="/cart" className="relative p-2 text-gray-600 dark:text-gray-300">
+            <button 
+              onClick={() => setCartDrawerOpen(true)}
+              className="relative p-2 text-gray-600 dark:text-gray-300 cursor-pointer"
+            >
               <FiShoppingCart size={18} />
               {mounted && cartCount > 0 && (
                 <span className="absolute top-1 right-1 h-3.5 w-3.5 bg-[#EC4899] text-white text-[8px] font-bold flex items-center justify-center rounded-full">
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </button>
 
             {/* Mobile Profile Dropdown */}
             {user ? (
@@ -426,6 +479,40 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </nav>
+      </nav>
+
+      {/* Right Drawer (Shopping Cart Drawer) */}
+      {cartDrawerOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden font-sans">
+          {/* Overlay backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setCartDrawerOpen(false)}
+          />
+
+          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div className="w-screen max-w-2xl bg-[#06060c] border-l border-white/[0.06] shadow-2xl flex flex-col transition-all duration-300">
+              {/* Drawer Header */}
+              <div className="px-6 py-6 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.01]">
+                <h2 className="text-lg font-black uppercase text-white tracking-wider flex items-center gap-2">
+                  <FiShoppingCart className="text-[#EC4899]" /> Shopping Cart
+                </h2>
+                <button 
+                  onClick={() => setCartDrawerOpen(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all cursor-pointer"
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
+
+              {/* Drawer Body - AddToCard Component */}
+              <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#06060c]">
+                <AddToCard isDrawer={true} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

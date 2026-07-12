@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSession } from '@/lib/auth-client';
 import { addToWishlist } from '@/lib/actions/wishlist';
+import { addToCartBackend } from '@/lib/actions/cart';
 import { FiShoppingCart, FiHeart, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 
 interface ProductActionsProps {
@@ -32,35 +33,34 @@ export default function ProductActions({ product }: ProductActionsProps) {
     }, 3000);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (!session?.user) {
+      showToast('error', 'Please log in to add to cart!');
+      return;
+    }
+
+    setLoading(true);
     try {
-      const currentCartRaw = localStorage.getItem('cart');
-      const cart = currentCartRaw ? JSON.parse(currentCartRaw) : [];
-      
       const productId = product.id || product._id;
-      const existing = cart.find((item: any) => item.id === productId || item._id === productId);
-      
-      if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
+      const res = await addToCartBackend(
+        session.user.email || '',
+        session.user.name || '',
+        session.user.id || '',
+        productId,
+        product,
+        1
+      );
+      if (res.success) {
+        showToast('success', 'Added to cart successfully!');
+        window.dispatchEvent(new Event('cart-updated'));
       } else {
-        cart.push({
-          id: productId,
-          _id: productId,
-          title: product.title,
-          brand: product.brand,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          category: product.category,
-          quantity: 1,
-        });
+        showToast('error', res.message);
       }
-      
-      localStorage.setItem('cart', JSON.stringify(cart));
-      window.dispatchEvent(new Event('cart-updated'));
-      showToast('success', 'Added to cart successfully!');
     } catch (error) {
       console.error(error);
       showToast('error', 'Failed to add to cart.');
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,9 +1,10 @@
+import AddToCard from '@/components/AddToCard';
 import React from 'react';
 
 const MyAdded = () => {
     return (
         <div>
-            MyAdded
+            <AddToCard></AddToCard>
         </div>
     );
 };

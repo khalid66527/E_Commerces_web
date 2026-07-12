@@ -209,88 +209,85 @@ export default function WishList() {
           </Link>
         </div>
 
-        {/* Wishlist Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((item) => (
-            <div 
-              key={item._id} 
-              className="wishlist-card group relative bg-white/[0.01] hover:bg-white/[0.02] border border-white/[0.06] hover:border-[#8B5CF6]/30 rounded-3xl overflow-hidden shadow-xl hover:shadow-[0_20px_50px_rgba(139,92,246,0.06)] transition-all duration-500 flex flex-col h-full"
-            >
-              {/* Product Image Frame */}
-              <div className="relative aspect-video sm:aspect-square bg-gradient-to-b from-[#0c0c16] to-[#06060c] overflow-hidden border-b border-white/[0.04]">
-                <div className="absolute inset-0 bg-[#8B5CF6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
-                {item.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img 
-                    src={item.imageUrl} 
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-600">
-                    <FiShoppingBag size={48} />
-                  </div>
-                )}
+        {/* Wishlist Items Table */}
+        <div className="border border-white/[0.06] rounded-3xl overflow-hidden shadow-inner bg-white/[0.01] backdrop-blur-md">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-white/[0.02] text-xs font-extrabold text-gray-500 uppercase tracking-wider border-b border-white/[0.06]">
+                <tr>
+                  <th scope="col" className="px-6 py-4">Product</th>
+                  <th scope="col" className="px-6 py-4">Brand</th>
+                  <th scope="col" className="px-6 py-4">Category</th>
+                  <th scope="col" className="px-6 py-4 text-right">Price</th>
+                  <th scope="col" className="px-6 py-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04]">
+                {items.map((item) => (
+                  <tr key={item._id} className="hover:bg-white/[0.02] transition-colors duration-200">
+                    {/* Product Image & Title */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-b from-[#0c0c16] to-[#06060c] border border-white/[0.06] flex-shrink-0 flex items-center justify-center">
+                          {item.imageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <FiShoppingBag className="text-gray-600" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="font-bold text-white text-sm truncate max-w-[250px]">{item.title}</h4>
+                          <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{item.description}</p>
+                        </div>
+                      </div>
+                    </td>
 
-                {/* Brand Tag */}
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-black/60 border border-white/[0.1] rounded-full text-[10px] font-bold text-gray-300 uppercase tracking-widest shadow-md">
-                    {item.brand || 'Premium'}
-                  </span>
-                </div>
+                    {/* Brand */}
+                    <td className="px-6 py-4 font-semibold text-gray-400">
+                      {item.brand || 'Premium'}
+                    </td>
 
-                {/* Category Tag */}
-                <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 rounded-full text-[10px] font-bold text-[#8B5CF6] uppercase tracking-widest shadow-md">
-                    {item.category}
-                  </span>
-                </div>
-              </div>
+                    {/* Category */}
+                    <td className="px-6 py-4">
+                      <span className="px-3 py-1 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 rounded-full text-[10px] font-bold text-[#8B5CF6] uppercase tracking-widest shadow-md">
+                        {item.category}
+                      </span>
+                    </td>
 
-              {/* Card Details Body */}
-              <div className="p-6 flex flex-col flex-1 justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-bold text-white text-lg line-clamp-2 leading-snug group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-all duration-300">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
-                    {item.description || 'Premium design with flagship performance and cutting-edge specifications.'}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-2 border-t border-white/[0.04]">
-                  <div>
-                    <span className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest">Price</span>
-                    <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] drop-shadow-[0_0_10px_rgba(236,72,153,0.15)]">
+                    {/* Price */}
+                    <td className="px-6 py-4 text-right font-black text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-base">
                       ${item.price}
-                    </span>
-                  </div>
+                    </td>
 
-                  {/* Actions Area */}
-                  <div className="flex items-center gap-2">
-                    {/* Add to Cart Button */}
-                    <button
-                      onClick={() => handleAddToCart(item)}
-                      className="p-3 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:shadow-lg hover:shadow-[#EC4899]/20 text-white rounded-2xl hover:brightness-110 transition-all duration-300 active:scale-95 flex items-center justify-center"
-                      title="Add to Cart"
-                    >
-                      <FiShoppingCart size={16} />
-                    </button>
+                    {/* Actions */}
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        {/* Add to Cart */}
+                        <button
+                          onClick={() => handleAddToCart(item)}
+                          className="p-3 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:shadow-lg hover:shadow-[#EC4899]/20 text-white rounded-xl hover:brightness-110 transition-all duration-300 active:scale-95 flex items-center justify-center cursor-pointer"
+                          title="Add to Cart"
+                        >
+                          <FiShoppingCart size={14} />
+                        </button>
 
-                    {/* Delete/Remove Button */}
-                    <button
-                      onClick={() => handleDelete(item._id)}
-                      disabled={actionLoadingId === item._id}
-                      className="p-3 bg-white/[0.02] border border-white/[0.08] hover:border-red-500 hover:bg-red-500/10 text-gray-400 hover:text-red-500 rounded-2xl transition-all duration-300 active:scale-95 flex items-center justify-center"
-                      title="Remove Item"
-                    >
-                      <FiTrash2 size={16} className={actionLoadingId === item._id ? 'animate-spin' : ''} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                        {/* Remove */}
+                        <button
+                          onClick={() => handleDelete(item._id)}
+                          disabled={actionLoadingId === item._id}
+                          className="p-3 bg-white/[0.02] border border-white/[0.08] hover:border-red-500 hover:bg-red-500/10 text-gray-400 hover:text-red-500 rounded-xl transition-all duration-300 active:scale-95 flex items-center justify-center cursor-pointer"
+                          title="Remove Item"
+                        >
+                          <FiTrash2 size={14} className={actionLoadingId === item._id ? 'animate-spin' : ''} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
