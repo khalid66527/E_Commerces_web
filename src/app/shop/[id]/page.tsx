@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { getProductById } from '@/lib/api/products';
+import ProductActions from '@/components/ProductActions';
 import { 
   FiShoppingCart, 
   FiHeart, 
@@ -219,15 +220,7 @@ export default async function ProductDetailsPage({ params }: PageProps) {
             </div>
 
             {/* Actions Row */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:shadow-lg hover:shadow-[#EC4899]/20 text-sm font-extrabold uppercase tracking-widest text-white rounded-2xl hover:brightness-110 transition-all duration-300 active:scale-[0.98]">
-                <FiShoppingCart size={18} className="animate-bounce" /> Add to Cart
-              </button>
-              
-              <button className="px-5 py-4 bg-white/[0.02] border border-white/[0.08] hover:border-[#EC4899] hover:bg-[#EC4899]/10 rounded-2xl text-gray-300 hover:text-white transition-all duration-300 active:scale-95 flex items-center justify-center">
-                <FiHeart size={18} />
-              </button>
-            </div>
+            <ProductActions product={product} />
 
             {/* Specifications Cards Grid */}
             <div className="space-y-4 pt-6 border-t border-white/[0.06]">

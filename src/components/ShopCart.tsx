@@ -4,7 +4,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Product } from '@/lib/api/products';
-import { FiSearch, FiHeart, FiShoppingCart, FiShoppingBag, FiEye } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiShoppingCart, FiShoppingBag, FiEye, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { useSession } from '@/lib/auth-client';
+import { addToWishlist } from '@/lib/actions/wishlist';
 
 interface ShopCartProps {
   products: Product[];
@@ -20,6 +22,86 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [priceSort, setPriceSort] = useState<'asc' | 'desc' | ''>('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: session } = useSession();
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    try {
+      const currentCartRaw = localStorage.getItem('cart');
+      const cart = currentCartRaw ? JSON.parse(currentCartRaw) : [];
+      
+      const productId = product.id || product._id;
+      const existing = cart.find((item: any) => item.id === productId || item._id === productId);
+      
+      if (existing) {
+        existing.quantity = (existing.quantity || 1) + 1;
+      } else {
+        cart.push({
+          id: productId,
+          _id: productId,
+          title: product.title,
+          brand: product.brand,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          category: product.category,
+          quantity: 1,
+        });
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('cart-updated'));
+      showToast('success', `${product.title} added to cart!`);
+    } catch (error) {
+      console.error(error);
+      showToast('error', 'Failed to add to cart.');
+    }
+  };
+
+  const handleAddToWishlist = async (product: Product) => {
+    if (!session?.user?.email) {
+      showToast('error', 'Please log in to add to wishlist!');
+      return;
+    }
+
+    const productId = product.id || product._id;
+    setLoadingProductId(productId);
+    try {
+      const res = await addToAddToWishlist(session.user.email, productId, product);
+      if (res.success) {
+        showToast('success', res.message);
+      } else {
+        showToast('error', res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('error', 'Something went wrong.');
+    } finally {
+      setLoadingProductId(null);
+    }
+  };
+
+  const addToAddToWishlist = async (email: string, productId: string, product: Product) => {
+    return await addToWishlist(email, productId, {
+      id: productId,
+      _id: productId,
+      title: product.title,
+      brand: product.brand,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      category: product.category,
+      description: product.description || '',
+      specifications: product.specifications || {},
+    });
+  };
 
   useEffect(() => {
     if (initialSearch) setSearchQuery(initialSearch);
@@ -160,12 +242,19 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
                       {/* Glassmorphic Actions Overlay on Hover with Staggered Animations */}
                       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                         {/* Wishlist Button */}
-                        <button className="p-3 bg-[#0c0c14]/80 hover:bg-[#EC4899] border border-white/[0.08] hover:border-transparent rounded-full text-gray-200 hover:text-white transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 ease-out delay-75">
-                          <FiHeart size={18} />
+                        <button 
+                          onClick={() => handleAddToWishlist(product)}
+                          disabled={loadingProductId === (product.id || product._id)}
+                          className="p-3 bg-[#0c0c14]/80 hover:bg-[#EC4899] border border-white/[0.08] hover:border-transparent rounded-full text-gray-200 hover:text-white transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 ease-out delay-75 disabled:opacity-50 flex items-center justify-center"
+                        >
+                          <FiHeart size={18} className={loadingProductId === (product.id || product._id) ? 'animate-spin' : ''} />
                         </button>
                         
                         {/* Add to Cart Button */}
-                        <button className="p-3 bg-[#0c0c14]/80 hover:bg-[#8B5CF6] border border-white/[0.08] hover:border-transparent rounded-full text-gray-200 hover:text-white transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 ease-out delay-100">
+                        <button 
+                          onClick={() => handleAddToCart(product)}
+                          className="p-3 bg-[#0c0c14]/80 hover:bg-[#8B5CF6] border border-white/[0.08] hover:border-transparent rounded-full text-gray-200 hover:text-white transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 ease-out delay-100 flex items-center justify-center"
+                        >
                           <FiShoppingCart size={18} />
                         </button>
                         
@@ -255,6 +344,17 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
             )}
           </div>
         )}
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed top-24 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl transition-all duration-300 animate-slide-in ${
+          toast.type === 'success' 
+            ? 'bg-green-500/10 border-green-500/20 text-green-400' 
+            : 'bg-red-500/10 border-red-500/20 text-red-400'
+        }`}>
+          {toast.type === 'success' ? <FiCheckCircle size={18} /> : <FiAlertCircle size={18} />}
+          <span className="text-sm font-semibold">{toast.message}</span>
+        </div>
+      )}
       </div>
 
       <style>{`

@@ -31,10 +31,23 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mounted, setMounted] = useState(false); // Solves the load/hydration flash issue
+  const [cartCount, setCartCount] = useState(0);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Initialize theme securely without visual flickering
+  const updateCartCount = () => {
+    try {
+      const currentCartRaw = localStorage.getItem('cart');
+      const cart = currentCartRaw ? JSON.parse(currentCartRaw) : [];
+      const total = cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+      setCartCount(total);
+    } catch (e) {
+      console.error(e);
+      setCartCount(0);
+    }
+  };
+
+  // Initialize theme and cart count securely
   useEffect(() => {
     setMounted(true);
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
@@ -46,6 +59,12 @@ export default function Navbar() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    updateCartCount();
+    window.addEventListener('cart-updated', updateCartCount);
+    return () => {
+      window.removeEventListener('cart-updated', updateCartCount);
+    };
   }, []);
 
   // Handle click outside profile dropdown
@@ -200,9 +219,11 @@ export default function Navbar() {
               {/* Cart Button */}
               <Link href="/cart" className="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-gray-200/50 dark:hover:border-white/[0.05] rounded-xl active:scale-95 transition-all duration-200 group">
                 <FiShoppingCart size={19} className="group-hover:translate-x-0.5 transition-transform" />
-                <span className="absolute top-1 right-1 h-4 w-4 bg-[#EC4899] text-white text-[9px] font-bold flex items-center justify-center rounded-full shadow-md shadow-[#EC4899]/40 animate-bounce">
-                  2
-                </span>
+                {mounted && cartCount > 0 && (
+                  <span className="absolute top-1 right-1 h-4 w-4 bg-[#EC4899] text-white text-[9px] font-bold flex items-center justify-center rounded-full shadow-md shadow-[#EC4899]/40 animate-bounce">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
 
               {/* Profile Dropdown or Sign In */}
@@ -300,9 +321,11 @@ export default function Navbar() {
             {/* Cart (Mobile) */}
             <Link href="/cart" className="relative p-2 text-gray-600 dark:text-gray-300">
               <FiShoppingCart size={18} />
-              <span className="absolute top-1 right-1 h-3.5 w-3.5 bg-[#EC4899] text-white text-[8px] font-bold flex items-center justify-center rounded-full">
-                2
-              </span>
+              {mounted && cartCount > 0 && (
+                <span className="absolute top-1 right-1 h-3.5 w-3.5 bg-[#EC4899] text-white text-[8px] font-bold flex items-center justify-center rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             {/* Mobile Profile Dropdown */}
