@@ -102,22 +102,12 @@ export default function Navbar() {
       ];
     }
 
-    if (role === 'admin') {
-      return [
-        { name: 'Home', href: '/' },
-        { name: 'Dashboard', href: '/dashboard' },
-        { name: 'Products', href: '/shop' },
-        { name: 'Orders', href: '/dashboard' },
-        { name: 'Users', href: '/dashboard' }
-      ];
-    }
-
     return [
       { name: 'Home', href: '/' },
       { name: 'Shop', href: '/shop' },
       { name: 'Categories', href: '/categories' },
-      { name: 'Hot Deals', href: '/deals' },
-      { name: 'Cart', href: '/cart' }
+      { name: 'Wishlist', href: '/wishlist' },
+      { name: 'Contact Us', href: '/contact' }
     ];
   };
 
@@ -261,7 +251,7 @@ export default function Navbar() {
                           className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/[0.04] rounded-xl text-sm font-medium transition-colors group"
                         >
                           <FiGrid size={16} className="text-[#EC4899] group-hover:scale-110 transition-transform" />
-                          <span>Dashboard</span>
+                          <span>{role === 'admin' ? 'Admin Dashboard' : 'User Dashboard'}</span>
                         </Link>
 
                         <Link
@@ -332,7 +322,9 @@ export default function Navbar() {
                     </div>
                     <div className="p-1">
                       <Link href="/profile" onClick={() => setDropdownOpen(false)} className="block px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-white/[0.04] rounded-lg text-xs">Profile</Link>
-                      <Link href="/dashboard" onClick={() => setDropdownOpen(false)} className="block px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-white/[0.04] rounded-lg text-xs">Dashboard</Link>
+                      <Link href="/dashboard" onClick={() => setDropdownOpen(false)} className="block px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-white/[0.04] rounded-lg text-xs">
+                        {role === 'admin' ? 'Admin Dashboard' : 'User Dashboard'}
+                      </Link>
                     </div>
                     <div className="p-1 border-t border-gray-100 dark:border-white/[0.06]">
                       <button onClick={handleLogout} className="w-full text-left block px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 rounded-lg text-xs">Log Out</button>
