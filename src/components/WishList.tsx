@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
 import { getWishlist, removeFromWishlist } from '@/lib/actions/wishlist';
+import { addToCartBackend } from '@/lib/actions/cart';
 import { 
   FiHeart, 
   FiTrash2, 
@@ -68,34 +69,41 @@ export default function WishList() {
     }
   }, [session, isPending]);
 
-  const handleAddToCart = (item: WishlistItem) => {
+  const handleAddToCart = async (item: WishlistItem) => {
+    if (!session?.user) {
+      showToast('error', 'Please log in to add to cart!');
+      return;
+    }
+
+    setActionLoadingId(item._id);
     try {
-      const currentCartRaw = localStorage.getItem('cart');
-      const cart = currentCartRaw ? JSON.parse(currentCartRaw) : [];
-      
-      const existing = cart.find((cartItem: any) => cartItem.id === item.productId || cartItem._id === item.productId);
-      
-      if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
+      const resCart = await addToCartBackend(
+        session.user.email || '',
+        session.user.name || '',
+        session.user.id || '',
+        item.productId,
+        item,
+        1
+      );
+
+      if (resCart.success) {
+        const resWish = await removeFromWishlist(item._id);
+        if (resWish.success) {
+          setItems(prev => prev.filter(p => p._id !== item._id));
+          window.dispatchEvent(new Event('cart-updated'));
+          showToast('success', `${item.title} moved to cart successfully!`);
+        } else {
+          window.dispatchEvent(new Event('cart-updated'));
+          showToast('success', `${item.title} added to cart!`);
+        }
       } else {
-        cart.push({
-          id: item.productId,
-          _id: item.productId,
-          title: item.title,
-          brand: item.brand,
-          price: item.price,
-          imageUrl: item.imageUrl,
-          category: item.category,
-          quantity: 1,
-        });
+        showToast('error', resCart.message || 'Failed to add to cart.');
       }
-      
-      localStorage.setItem('cart', JSON.stringify(cart));
-      window.dispatchEvent(new Event('cart-updated'));
-      showToast('success', `${item.title} added to cart!`);
     } catch (error) {
       console.error(error);
-      showToast('error', 'Failed to add to cart.');
+      showToast('error', 'Failed to move item to cart.');
+    } finally {
+      setActionLoadingId(null);
     }
   };
 
