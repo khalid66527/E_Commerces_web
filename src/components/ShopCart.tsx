@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Product } from '@/lib/api/products';
 import { FiSearch, FiHeart, FiShoppingCart, FiShoppingBag, FiEye } from 'react-icons/fi';
@@ -169,9 +170,13 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
                         </button>
                         
                         {/* Details View Button */}
-                        <button className="p-3 bg-[#0c0c14]/80 hover:bg-white/20 border border-white/[0.08] hover:border-transparent rounded-full text-gray-200 hover:text-white transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 ease-out delay-150">
+                        <Link 
+                          href={`/shop/${product.id}`}
+                          className="p-3 bg-[#0c0c14]/80 hover:bg-white/20 border border-white/[0.08] hover:border-transparent rounded-full text-gray-200 hover:text-white transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 ease-out delay-150 flex items-center justify-center"
+                          title="View Details"
+                        >
                           <FiEye size={18} />
-                        </button>
+                        </Link>
                       </div>
                     </div>
 
@@ -208,12 +213,13 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
                     </div>
 
                     {/* Details Button */}
-                    <button 
+                    <Link 
+                      href={`/shop/${product.id}`}
                       className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-white/[0.03] hover:bg-gradient-to-r hover:from-[#8B5CF6] hover:to-[#EC4899] hover:shadow-lg hover:shadow-[#EC4899]/10 border border-white/[0.06] hover:border-transparent rounded-xl text-xs font-bold text-white transition-all duration-300 active:scale-95"
                       title="View Details"
                     >
                       <span>Details</span>
-                    </button>
+                    </Link>
                   </div>
 
                 </div>
