@@ -1,10 +1,14 @@
 import ManageAllUaer from '@/components/dashboardcomponents/ManageAllUaer';
+import { getUsers } from '@/lib/api/users';
 import React from 'react';
 
-const ManageAllUaerPage = () => {
+export const dynamic = 'force-dynamic';
+
+const ManageAllUaerPage = async () => {
+    const users = await getUsers();
     return (
         <div>
-            <ManageAllUaer></ManageAllUaer>
+            <ManageAllUaer initialUsers={users}></ManageAllUaer>
         </div>
     );
 };
