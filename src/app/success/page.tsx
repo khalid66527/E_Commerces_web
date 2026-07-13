@@ -138,10 +138,10 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
                 Continue Shopping <FiArrowRight size={16} />
               </Link>
               <Link
-                href="/profile"
+                href="/dashboard/user/purcesshistory"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.08] text-gray-300 hover:text-white text-sm font-extrabold uppercase tracking-widest rounded-2xl transition-all active:scale-[0.98] cursor-pointer"
               >
-                View Profile
+                View Purcess History
               </Link>
             </div>
           </div>
