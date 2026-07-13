@@ -172,12 +172,12 @@ export default function SignIn() {
             </button>
 
             {/* Facebook */}
-            <button
+            {/* <button
               type="button"
               className="w-full h-12 border border-gray-800 hover:border-[#EC4899]/50 bg-[#16162a]/40 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm text-white"
             >
               <FaFacebookSquare /> Continue with Facebook
-            </button>
+            </button> */}
           </div>
 
           {/* Footer */}
