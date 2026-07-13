@@ -1,5 +1,7 @@
 "use server";
 
+import { getClientToken } from "./auth-token";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export async function submitContactMessage(data: {
@@ -9,10 +11,13 @@ export async function submitContactMessage(data: {
   message: string;
 }): Promise<{ success: boolean; message: string; data?: any }> {
   try {
+    const token = await getClientToken();
+
     const response = await fetch(`${API_URL}/api/contacts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
       body: JSON.stringify(data),
     });
@@ -38,10 +43,13 @@ export async function replyToContact(
       return { success: false, message: "ID and reply text are required" };
     }
 
+    const token = await getClientToken();
+
     const response = await fetch(`${API_URL}/api/contacts/${id}/reply`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ reply }),
     });

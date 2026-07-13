@@ -1,3 +1,5 @@
+import { getClientToken } from '../actions/auth-token';
+
 export interface User {
   id: string;
   _id: string;
@@ -12,8 +14,15 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export async function getUsers(): Promise<User[]> {
   try {
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/users`, {
       cache: "no-store",
+      headers
     });
 
     if (!response.ok) {

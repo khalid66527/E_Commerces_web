@@ -1,3 +1,5 @@
+import { getClientToken } from '../actions/auth-token';
+
 export interface ContactMessage {
   _id: string;
   name: string;
@@ -15,8 +17,15 @@ export async function getUserContacts(email: string): Promise<ContactMessage[]> 
   try {
     if (!email) return [];
     
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/contacts/user?email=${encodeURIComponent(email)}`, {
       cache: "no-store",
+      headers
     });
 
     if (!response.ok) {
@@ -33,8 +42,15 @@ export async function getUserContacts(email: string): Promise<ContactMessage[]> 
 
 export async function getAllContacts(): Promise<ContactMessage[]> {
   try {
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/contacts`, {
       cache: "no-store",
+      headers
     });
 
     if (!response.ok) {

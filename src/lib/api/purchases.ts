@@ -1,3 +1,5 @@
+import { getClientToken } from '../actions/auth-token';
+
 export interface PurchaseItem {
   productId: string;
   title: string;
@@ -23,7 +25,7 @@ export interface Purchase {
   createdAt: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getPurchaseHistory(email: string): Promise<Purchase[]> {
   try {
@@ -31,8 +33,16 @@ export async function getPurchaseHistory(email: string): Promise<Purchase[]> {
       return [];
     }
 
-    const response = await fetch(`${API_URL}/api/purchase-history?email=${encodeURIComponent(email)}`, {
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const url = API_URL || "http://localhost:5000";
+    const response = await fetch(`${url}/api/purchase-history?email=${encodeURIComponent(email)}`, {
       cache: "no-store",
+      headers
     });
 
     if (!response.ok) {
@@ -49,9 +59,16 @@ export async function getPurchaseHistory(email: string): Promise<Purchase[]> {
 
 export async function getAllPurchases(): Promise<Purchase[]> {
   try {
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const url = API_URL || "http://localhost:5000";
     const response = await fetch(`${url}/api/admin/purchases`, {
       cache: "no-store",
+      headers
     });
 
     if (!response.ok) {

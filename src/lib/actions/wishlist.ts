@@ -1,5 +1,7 @@
 "use server";
 
+import { getClientToken } from "./auth-token";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export async function addToWishlist(email: string, productId: string, product: any) {
@@ -8,10 +10,13 @@ export async function addToWishlist(email: string, productId: string, product: a
       return { success: false, message: "Email and Product ID are required" };
     }
 
+    const token = await getClientToken();
+
     const response = await fetch(`${API_URL}/api/wishlist`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ email, productId, product }),
     });
@@ -41,8 +46,15 @@ export async function getWishlist(email: string) {
       return { success: false, message: "Email is required" };
     }
 
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/wishlist?email=${encodeURIComponent(email)}`, {
       cache: "no-store",
+      headers
     });
 
     const data = await response.json();
@@ -70,8 +82,15 @@ export async function removeFromWishlist(id: string) {
       return { success: false, message: "Wishlist item ID is required" };
     }
 
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/wishlist/${id}`, {
       method: "DELETE",
+      headers
     });
 
     const data = await response.json();

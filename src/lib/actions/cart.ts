@@ -1,5 +1,7 @@
 "use server";
 
+import { getClientToken } from "./auth-token";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export async function addToCartBackend(
@@ -15,10 +17,13 @@ export async function addToCartBackend(
       return { success: false, message: "Email and Product ID are required" };
     }
 
+    const token = await getClientToken();
+
     const response = await fetch(`${API_URL}/api/cart`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ email, userName, userId, productId, product, quantity }),
     });
@@ -48,8 +53,15 @@ export async function getCartBackend(email: string) {
       return { success: false, message: "Email is required" };
     }
 
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/cart?email=${encodeURIComponent(email)}`, {
       cache: "no-store",
+      headers
     });
 
     const data = await response.json();
@@ -77,10 +89,13 @@ export async function updateCartQuantity(id: string, quantity: number) {
       return { success: false, message: "Cart item ID is required" };
     }
 
+    const token = await getClientToken();
+
     const response = await fetch(`${API_URL}/api/cart/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ quantity }),
     });
@@ -110,8 +125,15 @@ export async function removeFromCartBackend(id: string) {
       return { success: false, message: "Cart item ID is required" };
     }
 
+    const token = await getClientToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/cart/${id}`, {
       method: "DELETE",
+      headers
     });
 
     const data = await response.json();
