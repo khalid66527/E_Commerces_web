@@ -7,7 +7,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/dashboard/admin/profile');
+    router.push('/dashboard/admin/analyticsOverview');
   }, [router]);
 
   return (

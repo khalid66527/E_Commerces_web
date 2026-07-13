@@ -17,7 +17,7 @@ export default function DashboardPage() {
       } else {
         const role = session.user.role || 'user';
         if (role === 'admin') {
-          router.push('/dashboard/admin/profile');
+          router.push('/dashboard/admin/analyticsOverview');
         } else {
           router.push('/dashboard/user/profile');
         }
