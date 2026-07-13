@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
         quantity: item.quantity,
       })),
       mode: 'payment',
+      customer_email: userEmail,
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cart`,
       metadata: {
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
     }
 
-    await db.collection('orders').insertOne(order)
+    await db.collection('pursess').insertOne(order)
 
     return NextResponse.json({ url: session.url })
   } catch (err: any) {

@@ -24,10 +24,10 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
 
     // 2. If paid, update the order status in DB & clear user's cart
     if (session.payment_status === 'paid') {
-      const order = await db.collection('orders').findOne({ sessionId });
+      const order = await db.collection('pursess').findOne({ sessionId });
       if (order && order.paymentStatus === 'pending') {
         // Update order status to paid
-        await db.collection('orders').updateOne(
+        await db.collection('pursess').updateOne(
           { sessionId },
           {
             $set: {
@@ -66,7 +66,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     }
 
     // Retrieve order details to show on the success page
-    const orderDetails = await db.collection('orders').findOne({ sessionId });
+    const orderDetails = await db.collection('pursess').findOne({ sessionId });
 
     return (
       <div className="min-h-screen bg-[#06060C] text-white py-20 px-4 sm:px-6 lg:px-8">
