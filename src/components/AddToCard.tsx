@@ -115,6 +115,46 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
     }
   };
 
+  const handleCheckout = async () => {
+    if (!session?.user) {
+      showToast('error', 'Please log in to proceed with payment.');
+      router.push('/auth/signin');
+      return;
+    }
+    if (items.length === 0) {
+      showToast('error', 'Your cart is empty.');
+      return;
+    }
+
+    setActionLoadingId('checkout');
+    try {
+      const response = await fetch('/api/checkout_sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items,
+          userEmail: session.user.email,
+          userName: session.user.name || session.user.email,
+          userId: session.user.id,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        showToast('error', data.error || 'Failed to initiate checkout.');
+      }
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      showToast('error', 'Something went wrong. Please try again.');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
   const cartSubtotal = items.reduce((sum, item) => sum + (Number(item.price) || 0) * (item.quantity || 1), 0);
 
   // Render Login Prompt
@@ -331,10 +371,17 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
               </div>
 
               <button
-                onClick={() => alert("Payment integration placeholder!")}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white text-sm font-extrabold uppercase tracking-widest rounded-2xl shadow-lg shadow-[#EC4899]/20 hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer"
+                onClick={handleCheckout}
+                disabled={actionLoadingId === 'checkout' || items.length === 0}
+                className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white text-sm font-extrabold uppercase tracking-widest rounded-2xl shadow-lg shadow-[#EC4899]/20 hover:brightness-110 transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <FiCreditCard size={18} /> Proceed to Payment
+                {actionLoadingId === 'checkout' ? (
+                  <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                ) : (
+                  <>
+                    <FiCreditCard size={18} /> Proceed to Payment
+                  </>
+                )}
               </button>
             </div>
           </div>
