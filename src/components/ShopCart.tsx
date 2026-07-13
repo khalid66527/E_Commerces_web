@@ -8,6 +8,7 @@ import { FiSearch, FiHeart, FiShoppingCart, FiShoppingBag, FiEye, FiCheckCircle,
 import { useSession } from '@/lib/auth-client';
 import { addToWishlist } from '@/lib/actions/wishlist';
 import { addToCartBackend } from '@/lib/actions/cart';
+import ScrollReveal from '@/components/ScrollReveal';
 
 interface ShopCartProps {
   products: Product[];
@@ -202,16 +203,20 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
           <div className="space-y-12">
             {/* Products Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {paginatedProducts.map((product, idx) => (
-                <div
-                  key={product.id}
-                  className="group relative flex flex-col justify-between rounded-3xl bg-[#0c0c14]/20 border border-white/[0.06] hover:border-[#8B5CF6]/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(139,92,246,0.12)] overflow-hidden product-card"
-                  style={{
-                    animationDelay: `${idx * 50}ms`
-                  }}
-                >
-                  {/* Glowing background */}
-                  <span className="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/3 to-[#EC4899]/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></span>
+              {paginatedProducts.map((product, idx) => {
+                const direction = idx % 3 === 0 ? "left" : idx % 3 === 1 ? "bottom" : "right";
+                return (
+                  <ScrollReveal 
+                    key={product.id} 
+                    direction={direction} 
+                    delay={(idx % 3) * 100}
+                    className="h-full"
+                  >
+                    <div
+                      className="group relative flex flex-col justify-between h-full rounded-3xl bg-[#0c0c14]/20 border border-white/[0.06] hover:border-[#8B5CF6]/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(139,92,246,0.12)] overflow-hidden"
+                    >
+                      {/* Glowing background */}
+                      <span className="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/3 to-[#EC4899]/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></span>
 
                   <div className="relative z-10">
                     {/* Image Container with Hover Actions Overlay */}
@@ -309,8 +314,10 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
                   </div>
 
                 </div>
-              ))}
-            </div>
+              </ScrollReveal>
+              );
+            })}
+          </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
@@ -354,22 +361,6 @@ export default function ShopCart({ products, initialSearch = "" }: ShopCartProps
       )}
       </div>
 
-      <style>{`
-        .product-card {
-          opacity: 0;
-          animation: fadeInUpProduct 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes fadeInUpProduct {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -85,15 +85,8 @@ export default function Navbar() {
   // Initialize theme and cart count securely
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    const initialTheme = isDark ? 'dark' : 'light';
-    setTheme(initialTheme);
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    setTheme('dark');
+    document.documentElement.classList.add('dark');
   }, []);
 
   // Listen to cart update events, re-subscribing when user changes to avoid stale closures
@@ -119,14 +112,7 @@ export default function Navbar() {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    // Theme toggle disabled
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -245,14 +231,6 @@ export default function Navbar() {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-3 border-l border-gray-200 dark:border-white/[0.08] pl-6">
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="p-2.5 rounded-xl text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-gray-200/50 dark:hover:border-white/[0.05] active:scale-90 transition-all duration-200"
-                title="Toggle Theme"
-              >
-                {theme === 'dark' ? <FiSun size={19} className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" /> : <FiMoon size={19} className="text-indigo-600" />}
-              </button>
 
               {/* Cart Button */}
               <button 

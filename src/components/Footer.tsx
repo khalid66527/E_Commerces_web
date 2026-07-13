@@ -27,44 +27,7 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Value Proposition Grid (4 Columns) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-16 border-b border-white/[0.06]">
-          {[
-            { 
-              icon: <FiTruck className="text-xl text-[#8B5CF6]" />, 
-              title: "Free Express Shipping", 
-              desc: "On all orders over $150 with fast delivery" 
-            },
-            { 
-              icon: <FiShield className="text-xl text-[#EC4899]" />, 
-              title: "Secure Checkout", 
-              desc: "100% protected encryption payments" 
-            },
-            { 
-              icon: <FiRotateCcw className="text-xl text-[#8B5CF6]" />, 
-              title: "Easy 30-Day Returns", 
-              desc: "Hassle-free return policy for peace of mind" 
-            },
-            { 
-              icon: <FiMessageSquare className="text-xl text-[#EC4899]" />, 
-              title: "24/7 Expert Support", 
-              desc: "Get helper answers from tech team anytime" 
-            }
-          ].map((item, index) => (
-            <div 
-              key={index}
-              className="flex items-start gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-300 hover:-translate-y-1 group"
-            >
-              <div className="p-3 bg-white/[0.03] border border-white/[0.05] rounded-xl group-hover:scale-110 transition-transform duration-300">
-                {item.icon}
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-white tracking-wide">{item.title}</h4>
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+       
 
         {/* Top Section: Brand & Newsletter */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 py-16 border-b border-white/[0.06]">

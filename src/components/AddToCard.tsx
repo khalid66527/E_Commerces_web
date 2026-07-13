@@ -160,7 +160,7 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
   // Render Login Prompt
   if (!isPending && !session?.user) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-[#06060C] text-white">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-background text-foreground transition-colors duration-300">
         <div className="p-5 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 rounded-full animate-pulse mb-8">
           <FiShoppingBag className="text-6xl text-[#8B5CF6]" />
         </div>
@@ -183,10 +183,10 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
   // Render Loading State
   if (loading || isPending) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-[#06060C] text-white">
+      <div className="min-h-[70vh] flex items-center justify-center bg-background text-foreground transition-colors duration-300">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-4 border-[#8B5CF6] border-t-transparent animate-spin" />
-          <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">Loading Cart...</p>
+          <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Loading Cart...</p>
         </div>
       </div>
     );
@@ -195,14 +195,14 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
   // Render Empty State
   if (items.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-[#06060C] text-white animate-fade-in">
-        <div className="p-5 bg-white/[0.02] border border-white/[0.05] rounded-full mb-8">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-background text-foreground animate-fade-in transition-colors duration-300">
+        <div className="p-5 bg-muted border border-border rounded-full mb-8">
           <FiShoppingBag className="text-6xl text-gray-600 animate-bounce" />
         </div>
         <h1 className="text-3xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]">
           Your Cart is Empty
         </h1>
-        <p className="text-gray-500 mt-4 max-w-sm leading-relaxed">
+        <p className="text-muted-foreground mt-4 max-w-sm leading-relaxed font-medium">
           You haven&apos;t added any products to your cart yet. Let&apos;s start shopping!
         </p>
         <Link 
@@ -216,7 +216,7 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
   }
 
   return (
-    <div className={isDrawer ? "text-white font-sans w-full" : "min-h-screen bg-[#06060C] text-white py-12 px-4 sm:px-6 lg:px-8 font-sans"}>
+    <div className={isDrawer ? "text-foreground font-sans w-full" : "min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-300"}>
       {/* Toast Notification */}
       {toast && (
         <div className={`fixed top-24 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl transition-all duration-300 animate-slide-in ${
@@ -232,12 +232,12 @@ export default function AddToCard({ isDrawer = false }: AddToCardProps) {
       <div className={isDrawer ? "space-y-6 w-full animate-fade-in" : "max-w-7xl mx-auto space-y-12"}>
         {/* Header */}
         {!isDrawer && (
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/[0.06] pb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-6">
             <div>
               <h1 className="text-3xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]">
                 Shopping Cart
               </h1>
-              <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">
+              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-1">
                 You have {items.length} unique item{items.length > 1 ? 's' : ''} in your cart
               </p>
             </div>

@@ -58,8 +58,8 @@ export default async function ProductDetailsPage({ params }: PageProps) {
   // 404 handler screen
   if (!product) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-[#06060C] text-white">
-        <div className="p-5 bg-white/[0.02] border border-white/[0.05] rounded-full animate-bounce mb-8">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-background text-foreground transition-colors duration-300">
+        <div className="p-5 bg-muted border border-border rounded-full animate-bounce mb-8">
           <FiShoppingBag className="text-6xl text-gray-600" />
         </div>
         <h1 className="text-3xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]">
@@ -70,7 +70,7 @@ export default async function ProductDetailsPage({ params }: PageProps) {
         </p>
         <Link 
           href="/shop"
-          className="mt-8 flex items-center gap-2 px-6 py-3 bg-white/[0.04] hover:bg-gradient-to-r hover:from-[#8B5CF6] hover:to-[#EC4899] border border-white/[0.08] hover:border-transparent rounded-xl text-sm font-bold transition-all duration-300"
+          className="mt-8 flex items-center gap-2 px-6 py-3 bg-muted hover:bg-gradient-to-r hover:from-[#8B5CF6] hover:to-[#EC4899] border border-border hover:border-transparent rounded-xl text-sm font-bold transition-all duration-300 text-foreground hover:text-white dark:text-white"
         >
           <FiArrowLeft /> Back to Shop
         </Link>
@@ -128,21 +128,21 @@ export default async function ProductDetailsPage({ params }: PageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#06060C] text-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Navigation Breadcrumbs & Back Link */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/[0.06] pb-6">
-          <nav className="flex text-xs font-bold text-gray-500 uppercase tracking-widest gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-6">
+          <nav className="flex text-xs font-bold text-muted-foreground uppercase tracking-widest gap-2">
+            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
             <span>/</span>
-            <Link href="/shop" className="hover:text-white transition-colors">Shop</Link>
+            <Link href="/shop" className="hover:text-foreground transition-colors">Shop</Link>
             <span>/</span>
             <span className="text-[#EC4899] truncate max-w-[200px]">{product.title}</span>
           </nav>
           
           <Link 
             href="/shop"
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
           >
             <FiArrowLeft /> Back to products
           </Link>
@@ -153,7 +153,7 @@ export default async function ProductDetailsPage({ params }: PageProps) {
           {/* Left Column: Image & Badges */}
           <div className="space-y-8 animate-fade-in">
             {/* Image frame */}
-            <div className="relative aspect-square bg-gradient-to-b from-[#0c0c16] to-[#06060c] rounded-3xl overflow-hidden border border-white/[0.06] hover:border-[#8B5CF6]/30 transition-all duration-500 shadow-2xl flex items-center justify-center group">
+            <div className="relative aspect-square bg-gradient-to-b from-card to-background rounded-3xl overflow-hidden border border-border hover:border-[#8B5CF6]/30 transition-all duration-500 shadow-2xl flex items-center justify-center group">
               <div className="absolute inset-0 bg-[#8B5CF6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
               {product.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -174,12 +174,12 @@ export default async function ProductDetailsPage({ params }: PageProps) {
                 { icon: <FiShield className="text-xl text-[#EC4899]" />, title: "Secure Payments", subtitle: "SSL Encrypted" },
                 { icon: <FiRotateCcw className="text-xl text-[#8B5CF6]" />, title: "Easy Returns", subtitle: "30-Day Policy" }
               ].map((badge, idx) => (
-                <div key={idx} className="bg-white/[0.01] border border-white/[0.04] p-4 rounded-2xl text-center space-y-2 backdrop-blur-sm">
-                  <div className="mx-auto w-fit p-2.5 bg-white/[0.03] border border-white/[0.05] rounded-xl">
+                <div key={idx} className="bg-card border border-border p-4 rounded-2xl text-center space-y-2 backdrop-blur-sm">
+                  <div className="mx-auto w-fit p-2.5 bg-muted border border-border rounded-xl">
                     {badge.icon}
                   </div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">{badge.title}</h4>
-                  <p className="text-[9px] text-gray-500 font-medium">{badge.subtitle}</p>
+                  <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">{badge.title}</h4>
+                  <p className="text-[9px] text-muted-foreground font-medium">{badge.subtitle}</p>
                 </div>
               ))}
             </div>
@@ -193,12 +193,12 @@ export default async function ProductDetailsPage({ params }: PageProps) {
                 <span className="px-3 py-1 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 rounded-full text-[10px] font-extrabold uppercase text-[#8B5CF6] tracking-widest">
                   {product.category}
                 </span>
-                <span className="px-3 py-1 bg-white/[0.03] border border-white/[0.06] rounded-full text-[10px] font-extrabold uppercase text-gray-400 tracking-widest">
+                <span className="px-3 py-1 bg-muted border border-border rounded-full text-[10px] font-extrabold uppercase text-muted-foreground tracking-widest">
                   {product.brand}
                 </span>
               </div>
               
-              <h1 className="text-3xl sm:text-4xl font-black tracking-wide text-white uppercase leading-snug">
+              <h1 className="text-3xl sm:text-4xl font-black tracking-wide text-foreground uppercase leading-snug">
                 {product.title}
               </h1>
 
@@ -207,14 +207,14 @@ export default async function ProductDetailsPage({ params }: PageProps) {
                 <span className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] drop-shadow-[0_0_10px_rgba(236,72,153,0.25)]">
                   ${product.price}
                 </span>
-                <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">(Inc. all taxes)</span>
+                <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">(Inc. all taxes)</span>
               </div>
             </div>
 
             {/* Description */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Description</h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-medium">
+              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Description</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
                 {product.description || "Experience top-of-the-line performance with this premium product. Engineered with extreme precision and premium materials to ensure reliable daily operations and durability."}
               </p>
             </div>
@@ -223,8 +223,8 @@ export default async function ProductDetailsPage({ params }: PageProps) {
             <ProductActions product={product} />
 
             {/* Specifications Cards Grid */}
-            <div className="space-y-4 pt-6 border-t border-white/[0.06]">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Product Specifications</h3>
+            <div className="space-y-4 pt-6 border-t border-border">
+              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Product Specifications</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {specs.map((spec, index) => {
@@ -233,16 +233,16 @@ export default async function ProductDetailsPage({ params }: PageProps) {
                   return (
                     <div 
                       key={index} 
-                      className="group flex items-center gap-4 bg-white/[0.01] hover:bg-white/[0.03] border border-white/[0.04] hover:border-[#8B5CF6]/30 p-4 rounded-2xl transition-all duration-300 backdrop-blur-md hover:shadow-[0_0_20px_rgba(139,92,246,0.05)]"
+                      className="group flex items-center gap-4 bg-card hover:bg-muted border border-border hover:border-[#8B5CF6]/30 p-4 rounded-2xl transition-all duration-300 backdrop-blur-md hover:shadow-[0_0_20px_rgba(139,92,246,0.05)]"
                     >
-                      <div className="flex-shrink-0 p-3 bg-white/[0.03] border border-white/[0.05] group-hover:border-[#8B5CF6]/20 group-hover:bg-[#8B5CF6]/10 rounded-xl transition-all duration-300 shadow-inner">
+                      <div className="flex-shrink-0 p-3 bg-muted border border-border group-hover:border-[#8B5CF6]/20 group-hover:bg-[#8B5CF6]/10 rounded-xl transition-all duration-300 shadow-inner">
                         {getSpecIcon(spec.name)}
                       </div>
                       <div className="space-y-1">
-                        <span className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                           {spec.name}
                         </span>
-                        <div className="text-sm font-semibold text-white">
+                        <div className="text-sm font-semibold text-foreground">
                           {isStock ? (
                             <span className={`inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
                               product.stock && Number(product.stock) > 0

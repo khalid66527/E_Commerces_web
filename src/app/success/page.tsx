@@ -47,16 +47,16 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     } else {
       // If not paid, redirect or show error
       return (
-        <div className="min-h-screen bg-[#06060C] text-white flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white/[0.02] border border-white/[0.06] rounded-[2rem] p-8 text-center backdrop-blur-md">
+        <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6 transition-colors duration-300">
+          <div className="max-w-md w-full bg-card border border-border rounded-[2.5rem] p-8 text-center backdrop-blur-md">
             <FiAlertTriangle className="text-yellow-500 mx-auto mb-6 animate-pulse" size={64} />
             <h1 className="text-2xl font-black mb-4">Payment Pending or Failed</h1>
-            <p className="text-gray-400 text-sm mb-8 leading-relaxed">
+            <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
               We couldn't verify your payment yet. Please check your transaction or contact support.
             </p>
             <Link
               href="/cart"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl text-sm font-bold transition-all duration-300 active:scale-95 text-white"
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-muted hover:bg-gradient-to-r hover:from-[#8B5CF6] hover:to-[#EC4899] border border-border hover:border-transparent text-foreground hover:text-white dark:text-white rounded-xl text-sm font-bold transition-all duration-300 active:scale-95"
             >
               Go to Cart <FiArrowRight />
             </Link>
@@ -69,10 +69,10 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     const orderDetails = await db.collection('pursess').findOne({ sessionId });
 
     return (
-      <div className="min-h-screen bg-[#06060C] text-white py-20 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-background text-foreground py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
         <div className="max-w-3xl mx-auto">
           {/* Glassmorphic card */}
-          <div className="border border-white/[0.06] rounded-[2.5rem] p-8 sm:p-12 bg-white/[0.01] backdrop-blur-xl space-y-8 relative overflow-hidden shadow-2xl">
+          <div className="border border-border rounded-[2.5rem] p-8 sm:p-12 bg-card backdrop-blur-xl space-y-8 relative overflow-hidden shadow-2xl">
             {/* Top gradient blur glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-gradient-to-tr from-[#8B5CF6]/20 to-[#EC4899]/20 rounded-full blur-[80px] pointer-events-none -z-10" />
 
@@ -83,25 +83,25 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-[#8B5CF6] to-[#EC4899]">
                 Payment Successful!
               </h1>
-              <p className="text-gray-400 max-w-md mx-auto text-sm leading-relaxed">
-                Thank you for your purchase, <span className="text-white font-semibold">{orderDetails?.user?.name || orderDetails?.user?.email}</span>. Your order has been placed successfully and your cart is cleared.
+              <p className="text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
+                Thank you for your purchase, <span className="text-foreground font-semibold">{orderDetails?.user?.name || orderDetails?.user?.email}</span>. Your order has been placed successfully and your cart is cleared.
               </p>
             </div>
 
             {/* Order Details */}
             {orderDetails && (
-              <div className="border border-white/[0.06] rounded-2xl p-6 bg-white/[0.01] space-y-6">
-                <div className="flex justify-between items-center text-xs text-gray-500 font-bold uppercase tracking-widest pb-4 border-b border-white/[0.06]">
+              <div className="border border-border rounded-2xl p-6 bg-muted/30 space-y-6">
+                <div className="flex justify-between items-center text-xs text-muted-foreground font-bold uppercase tracking-widest pb-4 border-b border-border">
                   <span>Order Summary</span>
-                  <span className="text-white normal-case font-medium">Session ID: {orderDetails.sessionId.slice(-12)}</span>
+                  <span className="text-foreground normal-case font-medium">Session ID: {orderDetails.sessionId.slice(-12)}</span>
                 </div>
 
                 {/* Items list */}
                 <div className="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                   {orderDetails.items?.map((item: any, idx: number) => (
                     <div key={idx} className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/[0.02] border border-white/[0.06] flex-shrink-0 flex items-center justify-center">
+                       <div className="flex items-center gap-3">
+                         <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted border border-border flex-shrink-0 flex items-center justify-center">
                           {item.imageUrl ? (
                             <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
                           ) : (

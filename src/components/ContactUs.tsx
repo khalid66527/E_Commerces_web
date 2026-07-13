@@ -104,7 +104,7 @@ export default function ContactUs() {
   };
 
   return (
-    <div className="min-h-screen bg-[#06060C] text-white py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 relative transition-colors duration-300">
       {/* Toast Alert */}
       {toast && (
         <div className={`fixed top-24 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl transition-all duration-300 animate-slide-in ${
