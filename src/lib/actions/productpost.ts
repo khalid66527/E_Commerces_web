@@ -1,5 +1,7 @@
 "use server";
 
+import { getClientToken } from "./auth-token";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export async function createProduct(productData: any) {
@@ -8,11 +10,17 @@ export async function createProduct(productData: any) {
       return { success: false, message: "Invalid product data" };
     }
 
+    const token = await getClientToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api/products`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(productData),
     });
 
