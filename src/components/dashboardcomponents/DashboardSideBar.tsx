@@ -16,7 +16,8 @@ import {
   FiLogOut,
   FiHome,
   FiMenu,
-  FiX
+  FiX,
+  FiMail
 } from 'react-icons/fi';
 
 export default function DashboardSideBar() {
@@ -45,6 +46,7 @@ export default function DashboardSideBar() {
     { name: 'Manage Products', href: '/dashboard/admin/manageallproduct', icon: FiBox },
     { name: 'Post Product', href: '/dashboard/admin/postaProduct', icon: FiPlusCircle },
     { name: 'Transactions', href: '/dashboard/admin/viewAllTransactions', icon: FiCreditCard },
+    { name: 'User Contacts', href: '/dashboard/admin/userContact', icon: FiMail },
   ];
 
   const userLinks = [
