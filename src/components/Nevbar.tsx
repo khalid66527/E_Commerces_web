@@ -139,6 +139,7 @@ export default function Navbar() {
     if (!user) {
       return [
         { name: 'Home', href: '/' },
+        { name: 'About', href: '/about' },
         { name: 'Shop', href: '/shop' },
         { name: 'Categories', href: '/categories' }
       ];
@@ -146,6 +147,7 @@ export default function Navbar() {
 
     return [
       { name: 'Home', href: '/' },
+      { name: 'About', href: '/about' },
       { name: 'Shop', href: '/shop' },
       { name: 'Categories', href: '/categories' },
       { name: 'Wishlist', href: '/wishlist' },

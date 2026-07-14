@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { deleteProduct } from '@/lib/actions/products';
 import { 
   FiSearch, 
@@ -11,7 +12,8 @@ import {
   FiFilter, 
   FiDollarSign, 
   FiTrendingDown,
-  FiX
+  FiX,
+  FiEye
 } from 'react-icons/fi';
 
 interface Product {
@@ -267,7 +269,14 @@ export default function ManageAllProduct({ initialProducts = [] }: ManageAllProd
                           </td>
 
                           {/* Actions */}
-                          <td className="px-6 py-4.5 text-right">
+                          <td className="px-6 py-4.5 text-right flex items-center justify-end gap-2">
+                            <Link
+                              href={`/shop/${product.id}`}
+                              className="inline-flex items-center justify-center p-2 rounded-xl bg-purple-500/10 text-[#A78BFA] hover:bg-purple-500/20 transition-all"
+                              title="View Product Details"
+                            >
+                              <FiEye size={16} />
+                            </Link>
                             <button
                               disabled={isLoading}
                               onClick={() => setProductToDelete(product)}
@@ -342,7 +351,14 @@ export default function ManageAllProduct({ initialProducts = [] }: ManageAllProd
                         </div>
                       </div>
 
-                      <div className="flex justify-end pt-2 border-t border-gray-800/20">
+                      <div className="flex justify-end items-center gap-3 pt-2 border-t border-gray-800/20">
+                        <Link
+                          href={`/shop/${product.id}`}
+                          className="flex items-center justify-center gap-1.5 py-1.5 px-4 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-[#A78BFA] text-xs font-semibold transition-all"
+                        >
+                          <FiEye size={13} />
+                          <span>View Details</span>
+                        </Link>
                         <button
                           disabled={isLoading}
                           onClick={() => setProductToDelete(product)}

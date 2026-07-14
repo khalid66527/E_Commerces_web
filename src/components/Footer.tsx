@@ -67,10 +67,15 @@ export default function Footer() {
             <div className="space-y-5">
               <h4 className="text-xs font-bold uppercase tracking-widest text-white border-l-2 border-[#8B5CF6] ps-3">Shop Link</h4>
               <ul className="space-y-3 text-sm">
-                {['All Products', 'Featured Items', 'New Arrivals', 'Special Discounts'].map((item, idx) => (
+                {[
+                  { name: 'All Products', href: '/shop' },
+                  { name: 'Featured Items', href: '/#featured-products' },
+                  { name: 'New Arrivals', href: '/shop' },
+                  { name: 'Special Discounts', href: '/shop' }
+                ].map((item, idx) => (
                   <li key={idx}>
-                    <a href="#" className="hover:text-[#8B5CF6] hover:translate-x-1 flex items-center gap-1 transition-all duration-300">
-                      <span className="text-[10px] text-gray-700">▶</span> {item}
+                    <a href={item.href} className="hover:text-[#8B5CF6] hover:translate-x-1 flex items-center gap-1 transition-all duration-300">
+                      <span className="text-[10px] text-gray-700">▶</span> {item.name}
                     </a>
                   </li>
                 ))}
@@ -79,10 +84,15 @@ export default function Footer() {
             <div className="space-y-5">
               <h4 className="text-xs font-bold uppercase tracking-widest text-white border-l-2 border-[#EC4899] ps-3">Support</h4>
               <ul className="space-y-3 text-sm">
-                {['Contact Us', 'FAQ & Help', 'Shipping Details', 'Returns & Refunds'].map((item, idx) => (
+                {[
+                  { name: 'Contact Us', href: '/contact' },
+                  { name: 'FAQ & Help', href: '/#faq' },
+                  { name: 'About Us', href: '/about' },
+                  { name: 'Terms & Privacy', href: '/about' }
+                ].map((item, idx) => (
                   <li key={idx}>
-                    <a href="#" className="hover:text-[#EC4899] hover:translate-x-1 flex items-center gap-1 transition-all duration-300">
-                      <span className="text-[10px] text-gray-700">▶</span> {item}
+                    <a href={item.href} className="hover:text-[#EC4899] hover:translate-x-1 flex items-center gap-1 transition-all duration-300">
+                      <span className="text-[10px] text-gray-700">▶</span> {item.name}
                     </a>
                   </li>
                 ))}
@@ -131,9 +141,9 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} TECHWAVE. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-[#8B5CF6] transition-colors duration-300">Privacy Policy</a>
-            <a href="#" className="hover:text-[#EC4899] transition-colors duration-300">Terms of Service</a>
-            <a href="#" className="hover:text-white transition-colors duration-300">Cookie Policy</a>
+            <a href="/about" className="hover:text-[#8B5CF6] transition-colors duration-300">Privacy Policy</a>
+            <a href="/about" className="hover:text-[#EC4899] transition-colors duration-300">Terms of Service</a>
+            <a href="/about" className="hover:text-white transition-colors duration-300">Cookie Policy</a>
           </div>
         </div>
 
